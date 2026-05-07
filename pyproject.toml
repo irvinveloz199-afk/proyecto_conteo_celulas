@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "conteo_celulas"
+version = "1.0.0"
+authors = [
+  { name="Irvin Bladimir Veloz Briones" }
+]
+description = "Libreria en Python para conteo de celulas en imagenes microscopicas"
+readme = "README.md"
+requires-python = ">=3.8"
+
+dependencies = [
+  "opencv-python",
+  "numpy",
+  "matplotlib",
+  "scipy"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
