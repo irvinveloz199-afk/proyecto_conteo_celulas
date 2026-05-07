@@ -1,27 +1,52 @@
 import cv2
 import matplotlib.pyplot as plt
-from conteo_lib.filtros import filtro_sobel
-from conteo_lib.segmentacion import umbral_manual
 
-# 1. Cargar imagen
-img = cv2.imread('test.jpg')
+from conteo_lib.conteo import Pipeline_Celulas
+from conteo_lib.hough import HoughCircle
+
+img = cv2.imread("test.jpg")
+
 if img is None:
-    print("Error: No encontré test.jpg")
+    print("No se encontró test.jpg")
 else:
-    gris = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    total, resultado, sobel, canny, mask_blue, otsu = Pipeline_Celulas(img)
 
-    # 2. Detectar bordes con tu función Sobel
-    print("Procesando bordes...")
-    bordes = filtro_sobel(gris)
+    total_hough, img_hough = HoughCircle(img)
 
-    # 3. Convertir a Blanco y Negro Puro
-    # Si ves que sale muy negra, baja el 100 a 50. Si sale muy blanca, súbelo.
-    print("Segmentando...")
-    binaria = umbral_manual(bordes, 100) 
+    print("Células detectadas:", total)
+    print("Círculos Hough detectados:", total_hough)
 
-    # 4. Mostrar resultados
-    plt.figure(figsize=(12, 5))
-    plt.subplot(1,3,1), plt.imshow(gris, cmap='gray'), plt.title('Original (Gris)')
-    plt.subplot(1,3,2), plt.imshow(bordes, cmap='gray'), plt.title('Bordes Detectados')
-    plt.subplot(1,3,3), plt.imshow(binaria, cmap='gray'), plt.title('Imagen Binaria')
+    plt.figure(figsize=(16, 9))
+
+    plt.subplot(2, 3, 1)
+    plt.imshow(cv2.cvtColor(resultado, cv2.COLOR_BGR2RGB))
+    plt.title(f"Conteo final: {total}")
+    plt.axis("off")
+
+    plt.subplot(2, 3, 2)
+    plt.imshow(mask_blue, cmap="gray")
+    plt.title("Segmentación azul")
+    plt.axis("off")
+
+    plt.subplot(2, 3, 3)
+    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    plt.title("Imagen original")
+    plt.axis("off")
+
+    plt.subplot(2, 3, 4)
+    plt.imshow(sobel, cmap="gray")
+    plt.title("Sobel")
+    plt.axis("off")
+
+    plt.subplot(2, 3, 5)
+    plt.imshow(canny, cmap="gray")
+    plt.title("Canny")
+    plt.axis("off")
+
+    plt.subplot(2, 3, 6)
+    plt.imshow(cv2.cvtColor(img_hough, cv2.COLOR_BGR2RGB))
+    plt.title("Hough")
+    plt.axis("off")
+
+    plt.tight_layout()
     plt.show()

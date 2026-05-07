@@ -1,42 +1,24 @@
-##Parte 1:
-
+import cv2
 import numpy as np
+from scipy import signal
 
-def aplicar_convolucion(imagen, kernel):
-    """
-    Función para aplicar un filtro (kernel) de forma manual.
-    Esto cumple con la restricción de 'Implementación propia'.
-    """
-    # 1. Obtener dimensiones de la imagen y el kernel
-    img_h, img_w = imagen.shape
-    k_h, k_w = kernel.shape
-    
-    # 2. Padding: Agregamos un borde negro para que el kernel pueda
-    # pasar por los píxeles de las orillas sin salirse.
-    pad = k_h // 2
-    img_padded = np.pad(imagen, ((pad, pad), (pad, pad)), mode='constant')
-    
-    # 3. Crear imagen de salida (vacía por ahora)
-    salida = np.zeros((img_h, img_w), dtype=np.float32)
-    
-    # 4. Los dos ciclos FOR: Recorremos cada píxel de la imagen
-    for i in range(img_h):
-        for j in range(img_w):
-            # Extraemos la vecindad (el pedacito de imagen donde cae el kernel)
-            region = img_padded[i : i + k_h, j : j + k_w]
-            
-            # Multiplicamos la región por el kernel y sumamos todo
-            salida[i, j] = np.sum(region * kernel)
-            
-    return salida
+def grey(img, mode=1):
+    if mode == 1:  # BGR
+        b = img[:, :, 0]
+        g = img[:, :, 1]
+        r = img[:, :, 2]
+    else:          # RGB
+        r = img[:, :, 0]
+        g = img[:, :, 1]
+        b = img[:, :, 2]
 
-##Parte 2:
+    gray = 0.2989*r + 0.5870*g + 0.1140*b
+    return gray.astype(np.uint8)
 
-def filtro_sobel(imagen_gris):
-    """
-    Detecta bordes usando el operador Sobel.
-    """
-    # Estos son los Kernels que vienen en el código del profe
+def Gauss(img, k=5, sigma=1.2):
+    return cv2.GaussianBlur(img, (k, k), sigma)
+
+def Sobel(img):
     kernel_sx = np.array([[-1, 0, 1],
                           [-2, 0, 2],
                           [-1, 0, 1]], dtype=np.float32)
@@ -45,15 +27,14 @@ def filtro_sobel(imagen_gris):
                           [ 0,  0,  0],
                           [-1, -2, -1]], dtype=np.float32)
 
-    # USAMOS NUESTRA FUNCIÓN MANUAL en lugar de cv2 o signal
-    bordes_x = aplicar_convolucion(imagen_gris, kernel_sx)
-    bordes_y = aplicar_convolucion(imagen_gris, kernel_sy)
+    dx = signal.convolve2d(img, kernel_sx, mode='same')
+    dy = signal.convolve2d(img, kernel_sy, mode='same')
 
-    # Calculamos la magnitud del gradiente (combinar X y Y)
-    # Esto es igual a: sqrt(Gx^2 + Gy^2)
-    sobel = np.sqrt(bordes_x**2 + bordes_y**2)
-    
-    # Normalizamos para que los píxeles estén entre 0 y 255
-    sobel = (sobel / sobel.max() * 255).astype(np.uint8)
-    
-    return sobel
+    sobel = np.sqrt(dx**2 + dy**2)
+    sobel = cv2.normalize(sobel, None, 0, 255, cv2.NORM_MINMAX)
+
+    return sobel.astype(np.uint8)
+
+def Canny(img, k=5, sigma=1.2, low=40, high=120):
+    blur = cv2.GaussianBlur(img, (k, k), sigma)
+    return cv2.Canny(blur, low, high)

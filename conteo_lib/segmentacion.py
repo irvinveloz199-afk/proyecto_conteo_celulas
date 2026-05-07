@@ -1,16 +1,27 @@
+import cv2
 import numpy as np
 
-def umbral_manual(imagen_gris, valor_umbral=127):
-    """
-    Convierte la imagen a blanco y negro puro (binaria).
-    Píxeles arriba del umbral -> Blanco (255)
-    Píxeles abajo del umbral -> Negro (0)
-    """
-    # Creamos una matriz de ceros (negra) del mismo tamaño
-    binaria = np.zeros_like(imagen_gris)
-    
-    # Donde la imagen original sea mayor al umbral, ponemos blanco
-    # Esto es una operación de máscara mucho más rápida que un ciclo for
-    binaria[imagen_gris > valor_umbral] = 255
-    
-    return binaria.astype(np.uint8)
+def Otsu(img):
+    _, th = cv2.threshold(
+        img,
+        0,
+        255,
+        cv2.THRESH_BINARY + cv2.THRESH_OTSU
+    )
+    return th
+
+def BlueSegmentation(img_bgr):
+    hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+
+    # Rango de azul
+    lower_blue = np.array([85, 35, 40])
+    upper_blue = np.array([135, 255, 255])
+
+    mask = cv2.inRange(hsv, lower_blue, upper_blue)
+
+    kernel = np.ones((5, 5), np.uint8)
+
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=2)
+
+    return mask
