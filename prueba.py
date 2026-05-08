@@ -15,7 +15,7 @@ imagen = "test1.jpg"
 # Carga de matriz de imagen en espacio de color BGR
 img = cv2.imread(imagen)
 
-# Validación de integridad del archivo de entrada
+# Esto revisa si la imagen se cargó correctamente.
 if img is None:
     print(f"No se encontró la imagen: {imagen}")
 
@@ -26,7 +26,7 @@ else:
     # Evidencia técnica: Ejecución de la Transformada de Hough por separado
     total_hough, img_hough, mask_hough = HoughCircle(img)
 
-    # Generación de evidencias para dominio de frecuencia y transformaciones de punto
+    # Convierte la imagen original a escala de grises.
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Filtrado Pasa-Banda en frecuencia (Análisis espectral)

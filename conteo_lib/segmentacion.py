@@ -6,6 +6,9 @@ import numpy as np
 #→ convertirlos en blanco
 #→ convertir fondo en negro
 
+
+# aqui calculamos el mejor umbral para convertir la imagen en una máscara binaria 
+# donde las células quedan separadas del fondo.
 def Otsu(img):
     # El valor 0 se ignora ya que THRESH_OTSU determina el valor crítico de forma estadística
     _, th = cv2.threshold(
