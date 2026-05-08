@@ -1,8 +1,10 @@
 import cv2
 import numpy as np
+#Aqui usamos el hough para detectar círculos.
+#La imagen se convierte a escala de grises porque Hough detecta formas a partir de intensidad y bordes.
 
-# Algoritmo de supresión para eliminar círculos redundantes o solapados
-# Utiliza un criterio de proximidad basado en el radio para seleccionar la mejor detección
+# Esta función recibe todos los círculos detectados por Hough y elimina los que están repetidos o demasiado 
+# cerca de otro círculo ya aceptado. Esto evita contar dos veces la misma célula.”
 def filtrar_circulos(circulos):
     if len(circulos) == 0:
         return []
@@ -15,7 +17,7 @@ def filtrar_circulos(circulos):
     for (x, y, r) in circulos:
         repetido = False
 
-        # Comparación mediante distancia euclidiana entre centros de círculos
+        # Comparación mediante distancia entre centros de círculos
         for (xf, yf, rf) in filtrados:
             distancia = np.sqrt((x - xf) ** 2 + (y - yf) ** 2)
 
@@ -30,32 +32,32 @@ def filtrar_circulos(circulos):
     return filtrados
 
 
-# Detección de estructuras circulares mediante la Transformada de Hough (Gradiente)
-# Implementa un enfoque multiescala para capturar células de diversos diámetros
+#Esta función implementa la Transformada de Hough para detectar células con forma aproximadamente circular.
 def HoughCircle(img_bgr):
-    # Generación de lienzos para visualización y segmentación binaria
+#Creamaos los resultados junto con la mascara 
+#Creamos una copia de la imagen original para visualizar las detecciones 
+# y una máscara binaria para representar las células detectadas.
     resultado = img_bgr.copy()
     mask = np.zeros(img_bgr.shape[:2], dtype=np.uint8)
 
-    # Preprocesamiento: conversión a grises y suavizado Gaussiano para reducir falsos gradientes
+#Aqui aplicamos un suavizado Gaussiano para reducir ruido antes de ejecutar Hough.
     gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (9, 9), 2)
 
     # Cálculo de métricas proporcionales al tamaño de la imagen de entrada
     alto, ancho = gray.shape
     min_dim = min(alto, ancho)
-
+#Aquí se almacenamos temporalmente todas las detecciones circulares.
     candidatos = []
 
-    # Diccionarios de hiperparámetros para tres escalas: Pequeña, Mediana y Grande
-    # param2 es el umbral del acumulador: valores más altos exigen formas más circulares
+#Implementamos una estrategia multiescala para detectar distintos tamaños celulares.
     configuraciones = [
         {
-            "minDist": 25,
-            "param1": 100,
-            "param2": 34,
-            "minRadius": max(6, int(min_dim * 0.025)),
-            "maxRadius": max(20, int(min_dim * 0.10))
+            "minDist": 25,#Controla la distancia mínima entre centros de círculos.
+            "param1": 100,#Controla la intensidad de los bordes usados para detectar círculos
+            "param2": 34,#param2 controla la sensibilidad de la detección circular
+            "minRadius": max(6, int(min_dim * 0.025)),#Definimos un tamaño minimo Para evitar ruido 
+            "maxRadius": max(20, int(min_dim * 0.10))# y aqui el maximo para evitar falsos positivos.
         },
         {
             "minDist": 45,
@@ -73,7 +75,7 @@ def HoughCircle(img_bgr):
         }
     ]
 
-    # Iteración sobre las escalas para poblar el espacio de búsqueda
+#Aqui ejecutamos el algoritmo Hough múltiples veces para detectar distintos tamaños celulares.
     for cfg in configuraciones:
         circles = cv2.HoughCircles(
             blur,
@@ -95,21 +97,21 @@ def HoughCircle(img_bgr):
                     candidatos.append((x, y, r))
 
     # Ejecución de la lógica de filtrado para consolidar detecciones únicas
-    circulos = filtrar_circulos(candidatos)
+    circulos = filtrar_circulos(candidatos)#Las detecciones válidas se almacenan como candidatos para su posterior filtrado.
 
     conteo = 0
 
-    # Marcado gráfico de las detecciones validadas
+# Marcado gráfico de las detecciones validadas
     for (x, y, r) in circulos:
         conteo += 1
 
-        # Representación de la circunferencia estimada
+#Se dibuja una circunferencia verde para visualizar la detección celular.
         cv2.circle(resultado, (x, y), r, (0, 255, 0), 2)
 
-        # Representación del centroide de la célula
+#También se marca el centro de cada célula detectada.
         cv2.circle(resultado, (x, y), 2, (0, 0, 255), 3)
 
-        # Generación de máscara de segmentación (relleno sólido)
+#En la máscara binaria, se rellena un círculo blanco para representar cada célula detectada.
         cv2.circle(mask, (x, y), r, 255, -1)
 
     return conteo, resultado, mask
