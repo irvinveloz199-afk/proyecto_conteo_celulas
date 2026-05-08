@@ -302,7 +302,7 @@ el conteo puede variar.
 
 - Irvin Bladimir Veloz Briones
 - Joshua Natanael Alarcón Hernández
-- Jonathan Padila Alvarado 
+- Jonathan Padilla Alvarado 
 
 ---
 
