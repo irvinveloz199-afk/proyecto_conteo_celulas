@@ -1,111 +1,161 @@
-# Proyecto Conteo de Células
+# Librería de Conteo de Células en Imágenes Microscópicas
 
-Librería en Python para el conteo automático de células en imágenes microscópicas mediante técnicas de procesamiento digital de imágenes.
-
----
-
-# Descripción
-
-Este proyecto implementa una librería capaz de procesar imágenes microscópicas para detectar, segmentar y contar células. El sistema utiliza técnicas de preprocesamiento, filtrado espacial y en frecuencia, detección de bordes, umbralización, segmentación por regiones y transformada de Hough para estructuras aproximadamente circulares.
-
-El proyecto fue desarrollado como parte de la materia de procesamiento digital de imágenes.
+Proyecto desarrollado en Python para la detección, segmentación y conteo automático de células en imágenes microscópicas utilizando técnicas de procesamiento digital de imágenes.
 
 ---
 
-# Objetivo general
+# Objetivo del Proyecto
 
-Diseñar e implementar una librería en Python para el conteo automático de células en imágenes microscópicas, integrando técnicas de preprocesamiento, segmentación y detección de características.
+Diseñar e implementar una librería en Python capaz de:
 
----
-
-# Técnicas implementadas
-
-- Conversión de imagen RGB/BGR a escala de grises
-- Filtrado espacial Gaussiano
-- Filtrado en frecuencia mediante filtro pasa banda
-- Transformación logarítmica de intensidad
-- Detección de bordes con Sobel
-- Detección de bordes con Canny
-- Segmentación basada en color HSV
-- Umbralización
-- Conteo mediante componentes conectados
-- Transformada de Hough para detección de círculos
-- Visualización de resultados con Matplotlib
+- Procesar imágenes microscópicas.
+- Detectar células automáticamente.
+- Segmentar regiones celulares.
+- Contar células presentes en la imagen.
+- Aplicar técnicas de procesamiento digital de imágenes vistas en clase.
 
 ---
 
-# Temas integrados
+# Técnicas Implementadas
 
-- Point, line and edge detection
-- Thresholding
-- Region-based segmentation
-- Hough transform
-- Preprocesamiento de imágenes
+El proyecto integra diferentes técnicas de visión artificial y procesamiento digital de imágenes:
+
+## Preprocesamiento
+- Conversión a escala de grises.
+- Suavizado Gaussiano.
+- Reducción de ruido.
+
+## Detección de bordes
+- Sobel.
+- Canny.
+
+## Umbralización
+- Método de Otsu.
+
+## Segmentación
+- Segmentación por color en espacio HSV.
+- Componentes conectados.
+
+## Detección de formas
+- Transformada de Hough para detección de círculos.
+
+## Procesamiento adicional
+- Filtro en frecuencia usando FFT.
+- Transformación logarítmica.
 
 ---
 
-# Estructura del proyecto
+# Estructura del Proyecto
 
 ```text
 proyecto_conteo_celulas/
 │
 ├── conteo_lib/
-│   ├── __init__.py
-│   ├── conteo.py
 │   ├── filtros.py
+│   ├── segmentacion.py
 │   ├── hough.py
-│   └── segmentacion.py
+│   └── conteo.py
+│
+├── test1.jpg
+├── test2.jpg
+├── test3.jpg
+├── test4.jpg
+├── test5.jpg
 │
 ├── prueba.py
-├── test.jpg
 ├── README.md
-├── pyproject.toml
-└── .gitignore
+└── pyproject.toml
 ```
 
 ---
 
-# Requisitos
+# Explicación de Archivos
 
-Para ejecutar el proyecto se necesitan las siguientes librerías:
+## `filtros.py`
+Contiene funciones de preprocesamiento:
 
-```bash
-pip install opencv-python numpy matplotlib scipy
-```
+- Escala de grises.
+- Sobel.
+- Canny.
+- FFT.
+- Transformación logarítmica.
+
+---
+
+## `segmentacion.py`
+Contiene funciones de:
+
+- Umbralización Otsu.
+- Segmentación por color HSV.
+- Limpieza morfológica.
+
+---
+
+## `hough.py`
+Implementa:
+
+- Transformada de Hough.
+- Filtrado de círculos repetidos.
+- Detección multiescala.
+
+---
+
+## `conteo.py`
+Archivo principal de procesamiento.
+
+Incluye:
+
+- Conteo por componentes conectados.
+- Pipeline completo.
+- Selección automática entre segmentación y Hough.
+
+---
+
+## `prueba.py`
+Archivo de pruebas y visualización.
+
+Permite:
+- Cambiar la imagen de prueba.
+- Mostrar resultados del procesamiento.
+- Visualizar filtros y detecciones.
 
 ---
 
 # Instalación
 
-Clona el repositorio:
+## Crear entorno virtual (opcional)
 
 ```bash
-git clone https://github.com/irvinveloz199-afk/proyecto_conteo_celulas.git
+python -m venv .venv
 ```
 
-Entra a la carpeta del proyecto:
+## Activar entorno virtual
+
+### Windows
 
 ```bash
-cd proyecto_conteo_celulas
+.venv\Scripts\activate
 ```
 
-Instala las dependencias:
+### Linux / Mac
 
 ```bash
-pip install opencv-python numpy matplotlib scipy
-```
-
-También es posible instalar el proyecto directamente desde GitHub:
-
-```bash
-pip install git+https://github.com/irvinveloz199-afk/proyecto_conteo_celulas.git
+source .venv/bin/activate
 ```
 
 ---
 
-# Uso
+# Instalación de Dependencias
 
-Ejecuta el script principal:
+```bash
+pip install opencv-python numpy scipy matplotlib
+```
+
+---
+
+# Ejecución del Proyecto
+
+Para ejecutar el programa:
 
 ```bash
 python prueba.py
@@ -113,82 +163,153 @@ python prueba.py
 
 ---
 
-# Funcionamiento general
+# Uso de Imágenes de Prueba
 
-El programa realiza el siguiente flujo:
+El proyecto incluye 5 imágenes de prueba:
 
-1. Carga la imagen microscópica.
-2. Convierte la imagen a escala de grises.
-3. Aplica filtrado espacial y filtrado en frecuencia.
-4. Aplica transformación logarítmica.
-5. Detecta bordes mediante Sobel y Canny.
-6. Segmenta las células usando color azul en HSV.
-7. Detecta componentes conectados.
-8. Cuenta las células detectadas.
-9. Muestra resultados intermedios y finales.
+- `test1.jpg`
+- `test2.jpg`
+- `test3.jpg`
+- `test4.jpg`
+- `test5.jpg`
 
----
+Para cambiar la imagen analizada, modificar la siguiente línea dentro de `prueba.py`:
 
-# Salida esperada
+```python
+imagen = "test1.jpg"
+```
 
-Al ejecutar `prueba.py`, el programa muestra:
+Por ejemplo:
 
-- Conteo final de células
-- Segmentación azul
-- Imagen original
-- Resultado Sobel
-- Resultado Canny
-- Resultado del filtro en frecuencia
-- Resultado de transformación logarítmica
-- Resultado de Hough
-
-Además, en consola se imprime el número de células detectadas.
+```python
+imagen = "test3.jpg"
+```
 
 ---
 
-# Resultados
+# Resultados Mostrados
 
-El sistema detecta correctamente la mayoría de las células visibles en la imagen de prueba, incluyendo células pequeñas y parcialmente visibles.
+El programa genera una ventana con:
 
-El conteo final se realiza mediante segmentación basada en color y componentes conectados, mientras que la transformada de Hough se utiliza como técnica complementaria para detección de formas circulares.
+1. Conteo final.
+2. Segmentación / máscara.
+3. Imagen original.
+4. Detección Hough.
+5. Sobel.
+6. Canny.
+7. Filtro en frecuencia.
+8. Transformación logarítmica.
+
+---
+
+# Funcionamiento General
+
+El pipeline principal funciona de la siguiente manera:
+
+```text
+Imagen original
+→ Escala de grises
+→ Sobel y Canny
+→ Segmentación HSV
+→ Conteo por regiones
+→ Hough como respaldo
+→ Selección automática del mejor método
+→ Conteo final
+```
+
+---
+
+# Selección Automática de Método
+
+El sistema evalúa automáticamente si la segmentación por color es confiable.
+
+- Si la máscara tiene buena calidad:
+  - se usa segmentación por color.
+
+- Si la máscara falla o detecta demasiadas regiones:
+  - se utiliza la Transformada de Hough.
+
+Esto permite mayor robustez ante diferentes tipos de imágenes.
+
+---
+
+# Parámetros Ajustables
+
+Durante pruebas o presentación se pueden modificar:
+
+## En `prueba.py`
+
+```python
+imagen = "test1.jpg"
+```
+
+Para cambiar la imagen.
+
+---
+
+## En `conteo.py`
+
+```python
+if total_color >= 5 and area_blanca < 0.28:
+```
+
+El valor `0.28` controla cuándo usar segmentación o Hough.
+
+---
+
+## En `hough.py`
+
+```python
+param2
+```
+
+Controla la sensibilidad de Hough.
+
+- Más alto → menos círculos falsos.
+- Más bajo → detecta más círculos.
 
 ---
 
 # Limitaciones
 
-El algoritmo puede presentar errores cuando:
+El sistema funciona mejor en imágenes:
 
-- Las células están parcialmente fuera de la imagen.
-- Existen reflejos o sombras.
-- Las células tienen colores muy similares al fondo.
-- Las células están superpuestas.
-- Las estructuras no son completamente circulares.
-- La iluminación de la imagen cambia significativamente.
+- con buen contraste,
+- células aproximadamente circulares,
+- poco ruido,
+- y pocas superposiciones.
 
----
+En imágenes con:
+- células muy recortadas,
+- bajo contraste,
+- o demasiadas células superpuestas,
 
-# Requerimientos técnicos cumplidos
-
-- Conversión RGB a escala de grises
-- Filtrado espacial
-- Filtrado en frecuencia
-- Transformación de intensidad
-- Detección de bordes
-- Umbralización
-- Segmentación
-- Conteo automático de células
+el conteo puede variar.
 
 ---
 
-# Autores
-Integrantes:
+# Tecnologías Utilizadas
+
+- Python
+- OpenCV
+- NumPy
+- SciPy
+- Matplotlib
+
+---
+
+# Integrantes
 
 - Irvin Bladimir Veloz Briones
-- Joshua Natanael Alarcon Hernandez
-- Jonathan Padilla Alvarado 
+- Joshua Natanael Alarcón Hernández
+- Jonathan Padila Alvarado 
 
 ---
 
-# Estado del proyecto
+# Materia
 
-Proyecto funcional para detección, segmentación y conteo automático de células en imágenes microscópicas.
+Vision Robotica 
+
+---
+
+
